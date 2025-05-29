@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selección de Sistemas para Emulación</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --hover-color: #2980b9;
+            --bg-color: #f8f9fa;
+            --item-hover: #e9ecef;
+            --text-dark: #2c3e50;
+            --text-light: #7f8c8d;
+            --border-color: #ddd;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 25px;
+            line-height: 1.6;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            text-align: center;
+            color: var(--text-dark);
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+        .search-container {
+            margin: 25px 0;
+            position: relative;
+        }
+        #search {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        #search:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 2px 12px rgba(52, 152, 219, 0.3);
+        }
+        .counter {
+            text-align: center;
+            margin: 15px 0;
+            color: var(--text-light);
+            font-size: 0.95em;
+        }
+        .counter span {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 25px 0;
+            flex-wrap: wrap;
+        }
+        button {
+            padding: 12px 24px;
+            cursor: pointer;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        button:hover {
+            background: var(--hover-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .emulator-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .emulator-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            transition: all 0.3s;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            border: 1px solid var(--border-color);
+        }
+        .emulator-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.12);
+            border-color: var(--primary-color);
+        }
+        .emulator-checkbox {
+            margin-right: 15px;
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        .emulator-image {
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+            margin-right: 15px;
+            border-radius: 8px;
+            background: white;
+            padding: 5px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .emulator-label {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .emulator-name {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 3px;
+            font-size: 1.05em;
+        }
+        .emulator-desc {
+            font-size: 0.85em;
+            color: var(--text-light);
+            line-height: 1.4;
+        }
+        #result {
+            margin-top: 40px;
+            padding: 25px;
+            border: 1px solid var(--border-color);
+            background-color: white;
+            border-radius: 10px;
+            display: none;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        .no-image {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+            color: #999;
+            font-size: 0.7em;
+            text-align: center;
+            font-weight: 500;
+        }
+        @media (max-width: 768px) {
+            .emulator-list {
+                grid-template-columns: 1fr;
+            }
+            .emulator-item {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>🕹️ Selecciona los sistemas para emulación</h1>
+    
+    <div class="search-container">
+        <input type="text" id="search" placeholder="🔍 Buscar sistema (nombre, fabricante o descripción)...">
+    </div>
+    
+    <div class="counter">
+        <span id="selectedCount">0</span> seleccionados de <span id="totalCount">0</span> sistemas disponibles
+    </div>
+    
+    <div class="buttons">
+        <button onclick="selectAll()">✓ Seleccionar todos</button>
+        <button onclick="deselectAll()">✗ Deseleccionar todos</button>
+        <button onclick="generateList()">📋 Generar lista seleccionada</button>
+    </div>
+    
+    <div class="emulator-list" id="emulatorList"></div>
+    
+    <div id="result"></div>
+    
+    <script>
+        // Configuración de imágenes WEBP
+        const IMAGE_BASE_URL = 'images/consoles/';
+        const IMAGE_EXTENSION = '.webp';
+        const DEFAULT_IMAGE = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100"><rect width="100" height="100" fill="%23f5f7fa"/><text x="50" y="55" font-family="Arial" font-size="10" text-anchor="middle" fill="%23999">Imagen no disponible</text></svg>';
+        
+        // Datos completos de los sistemas (lista completa)
+        const systems = [
+            { id: "3do", name: "The 3DO Company", desc: "3DO Interactive Multiplayer (1993)", img: "3do" },
+            { id: "amiga", name: "Commodore", desc: "Amiga (serie 500/1000/2000, 1985)", img: "amiga" },
+            { id: "amiga1200", name: "Commodore", desc: "Amiga 1200 (1992)", img: "amiga1200" },
+            { id: "amigacd32", name: "Commodore", desc: "Amiga CD32 (1993)", img: "amigacd32" },
+            { id: "amstradcpc", name: "Amstrad", desc: "CPC (Color Personal Computer, 1984)", img: "amstradcpc" },
+            { id: "arduboy", name: "Arduboy", desc: "Consola portátil programable (2014)", img: "arduboy" },
+            { id: "atari2600", name: "Atari", desc: "2600 (VCS, 1977)", img: "atari2600" },
+            { id: "atari5200", name: "Atari", desc: "5200 SuperSystem (1982)", img: "atari5200" },
+            { id: "atari7800", name: "Atari", desc: "7800 ProSystem (1986)", img: "atari7800" },
+            { id: "atarijaguar", name: "Atari", desc: "Jaguar (1993)", img: "atarijaguar" },
+            { id: "atarilynx", name: "Atari", desc: "Lynx (portátil, 1989)", img: "atarilynx" },
+            { id: "atarist", name: "Atari", desc: "ST (series ST/STE/TT/Falcon, 1985)", img: "atarist" },
+            { id: "atomiswave", name: "Sammy Corporation", desc: "Atomiswave (arcade, 2003)", img: "atomiswave" },
+            { id: "c64", name: "Commodore", desc: "64 (C64, 1982)", img: "c64" },
+            { id: "colecovision", name: "Coleco", desc: "ColecoVision (1982)", img: "colecovision" },
+            { id: "cps1", name: "Capcom", desc: "CP System (CPS-1, arcade, 1988)", img: "cps1" },
+            { id: "cps2", name: "Capcom", desc: "CP System II (CPS-2, arcade, 1993)", img: "cps2" },
+            { id: "cps3", name: "Capcom", desc: "CP System III (CPS-3, arcade, 1996)", img: "cps3" },
+            { id: "dos", name: "IBM", desc: "PC DOS (juegos para DOS, 1981)", img: "dos" },
+            { id: "dreamcast", name: "Sega", desc: "Dreamcast (1998)", img: "dreamcast" },
+            { id: "easyrpg", name: "EasyRPG", desc: "Juegos RPG Maker 2000/2003 (2000)", img: "easyrpg" },
+            { id: "fbneo", name: "FinalBurn Neo", desc: "Emulador de arcade múltiple", img: "fbneo" },
+            { id: "flash", name: "Adobe", desc: "Flash Player (juegos .swf)", img: "flash" },
+            { id: "gameandwatch", name: "Nintendo", desc: "Game & Watch (1980)", img: "gameandwatch" },
+            { id: "gamegear", name: "Sega", desc: "Game Gear (1990)", img: "gamegear" },
+            { id: "gb", name: "Nintendo", desc: "Game Boy (original, 1989)", img: "gb" },
+            { id: "gba", name: "Nintendo", desc: "Game Boy Advance (2001)", img: "gba" },
+            { id: "gbc", name: "Nintendo", desc: "Game Boy Color (1998)", img: "gbc" },
+            { id: "gc", name: "Nintendo", desc: "GameCube (2001)", img: "gc" },
+            { id: "mame", name: "MAME", desc: "Multiple Arcade Machine Emulator", img: "mame" },
+            { id: "mastersystem", name: "Sega", desc: "Master System (1985)", img: "mastersystem" },
+            { id: "megacd", name: "Sega", desc: "Mega-CD/Sega CD (1991)", img: "megacd" },
+            { id: "megadrive", name: "Sega", desc: "Mega Drive/Genesis (1988)", img: "megadrive" },
+            { id: "model2", name: "Sega", desc: "Model 2 (arcade, 1993)", img: "model2" },
+            { id: "msx1", name: "Microsoft", desc: "MSX (primera generación, 1983)", img: "msx1" },
+            { id: "msx2", name: "Microsoft", desc: "MSX2 (1985)", img: "msx2" },
+            { id: "mugen", name: "M.U.G.E.N", desc: "Motor de juegos de lucha", img: "mugen" },
+            { id: "n3ds", name: "Nintendo", desc: "Nintendo 3DS (2011)", img: "n3ds" },
+            { id: "n64", name: "Nintendo", desc: "Nintendo 64 (1996)", img: "n64" },
+            { id: "naomi", name: "Sega", desc: "NAOMI (arcade, 1998)", img: "naomi" },
+            { id: "naomi2", name: "Sega", desc: "NAOMI 2 (arcade, 2000)", img: "naomi2" },
+            { id: "nds", name: "Nintendo", desc: "Nintendo DS (2004)", img: "nds" },
+            { id: "neogeo", name: "SNK", desc: "Neo Geo AES/MVS (1990)", img: "neogeo" },
+            { id: "neogeocd", name: "SNK", desc: "Neo Geo CD (1994)", img: "neogeocd" },
+            { id: "nes", name: "Nintendo", desc: "NES (Nintendo Entertainment System, 1983)", img: "nes" },
+            { id: "ngp", name: "SNK", desc: "Neo Geo Pocket (1998)", img: "ngp" },
+            { id: "ngpc", name: "SNK", desc: "Neo Geo Pocket Color (1999)", img: "ngpc" },
+            { id: "odyssey2", name: "Magnavox/Philips", desc: "Odyssey² (1978)", img: "odyssey2" },
+            { id: "pcengine", name: "NEC", desc: "PC Engine/TurboGrafx-16 (1987)", img: "pcengine" },
+            { id: "pcenginecd", name: "NEC", desc: "PC Engine CD/TurboGrafx-CD (1988)", img: "pcenginecd" },
+            { id: "pico8", name: "Lexaloffle", desc: "PICO-8 (fantasy console)", img: "pico8" },
+            { id: "ps2", name: "Sony", desc: "PlayStation 2 (2000)", img: "ps2" },
+            { id: "ps3", name: "Sony", desc: "PlayStation 3 (2006)", img: "ps3" },
+            { id: "psp", name: "Sony", desc: "PlayStation Portable (2004)", img: "psp" },
+            { id: "psvita", name: "Sony", desc: "PlayStation Vita (2011)", img: "psvita" },
+            { id: "psx", name: "Sony", desc: "PlayStation (PS1, 1994)", img: "psx" },
+            { id: "satellaview", name: "Nintendo", desc: "Satellaview (BS-X, 1995)", img: "satellaview" },
+            { id: "saturn", name: "Sega", desc: "Saturn (1994)", img: "saturn" },
+            { id: "scummvm", name: "SCUMM", desc: "Motor de aventuras gráficas", img: "scummvm" },
+            { id: "sega32x", name: "Sega", desc: "32X (1994)", img: "sega32x" },
+            { id: "snes", name: "Nintendo", desc: "Super Nintendo (SNES, 1990)", img: "snes" },
+            { id: "stv", name: "Sega", desc: "ST-V (arcade, basado en Saturn, 1994)", img: "stv" },
+            { id: "supervision", name: "Watara", desc: "SuperVision (1992)", img: "supervision" },
+            { id: "switch", name: "Nintendo", desc: "Nintendo Switch (2017)", img: "switch" },
+            { id: "uzebox", name: "Uzebox", desc: "Consola DIY de 8 bits", img: "uzebox" },
+            { id: "vectrex", name: "GCE/Milton Bradley", desc: "Vectrex (1982)", img: "vectrex" },
+            { id: "videopac", name: "Magnavox/Philips", desc: "Videopac G7000 (1978)", img: "videopac" },
+            { id: "vircon32", name: "Vircon", desc: "Consola virtual de 32 bits", img: "vircon32" },
+            { id: "virtualboy", name: "Nintendo", desc: "Virtual Boy (1995)", img: "virtualboy" },
+            { id: "wasm4", name: "WASM-4", desc: "Fantasy console para WebAssembly", img: "wasm4" },
+            { id: "wii", name: "Nintendo", desc: "Wii (2006)", img: "wii" },
+            { id: "wiiu", name: "Nintendo", desc: "Wii U (2012)", img: "wiiu" },
+            { id: "wonderswan", name: "Bandai", desc: "WonderSwan (1999)", img: "wonderswan" },
+            { id: "wonderswancolor", name: "Bandai", desc: "WonderSwan Color (2000)", img: "wonderswancolor" },
+            { id: "x68000", name: "Sharp", desc: "X68000 (1987)", img: "x68000" },
+            { id: "xbox", name: "Microsoft", desc: "Xbox (original, 2001)", img: "xbox" },
+            { id: "xbox360", name: "Microsoft", desc: "Xbox 360 (2005)", img: "xbox360" },
+            { id: "zmachine", name: "Infocom", desc: "Máquina Z (aventuras de texto, 1979)", img: "zmachine" },
+            { id: "zx81", name: "Sinclair", desc: "ZX81 (1981)", img: "zx81" },
+            { id: "zxspectrum", name: "Sinclair", desc: "ZX Spectrum (1982)", img: "zxspectrum" }
+        ];
+
+        // Variables globales
+        let currentSystems = [...systems];
+        
+        // Elementos del DOM
+        const emulatorList = document.getElementById('emulatorList');
+        const totalCount = document.getElementById('totalCount');
+        const selectedCount = document.getElementById('selectedCount');
+        const searchInput = document.getElementById('search');
+        
+        // Inicialización
+        function init() {
+            totalCount.textContent = systems.length;
+            renderSystems();
+            setupEventListeners();
+        }
+        
+        // Configurar event listeners
+        function setupEventListeners() {
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                if (searchTerm.length > 0) {
+                    currentSystems = systems.filter(system => 
+                        system.id.toLowerCase().includes(searchTerm) || 
+                        system.name.toLowerCase().includes(searchTerm) || 
+                        system.desc.toLowerCase().includes(searchTerm)
+                    );
+                } else {
+                    currentSystems = [...systems];
+                }
+                renderSystems();
+            });
+            
+            // Tecla rápida Ctrl+A para seleccionar todos
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey && e.key === 'a') {
+                    e.preventDefault();
+                    selectAll();
+                }
+            });
+        }
+        
+        // Renderizar sistemas
+        function renderSystems() {
+            emulatorList.innerHTML = '';
+            
+            currentSystems.forEach(system => {
+                const item = document.createElement('div');
+                item.className = 'emulator-item';
+                
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'emulator-checkbox';
+                checkbox.id = system.id;
+                checkbox.value = system.id;
+                checkbox.dataset.name = system.name;
+                checkbox.dataset.desc = system.desc;
+                
+                const img = document.createElement('img');
+                img.className = 'emulator-image';
+                img.src = `${IMAGE_BASE_URL}${system.img}${IMAGE_EXTENSION}`;
+                img.alt = system.name;
+                img.title = system.desc;
+                img.onerror = function() {
+                    this.src = DEFAULT_IMAGE;
+                };
+                
+                const label = document.createElement('div');
+                label.className = 'emulator-label';
+                
+                const nameSpan = document.createElement('div');
+                nameSpan.className = 'emulator-name';
+                nameSpan.textContent = system.name;
+                
+                const descSpan = document.createElement('div');
+                descSpan.className = 'emulator-desc';
+                descSpan.textContent = system.desc;
+                
+                label.appendChild(nameSpan);
+                label.appendChild(descSpan);
+                
+                item.appendChild(checkbox);
+                item.appendChild(img);
+                item.appendChild(label);
+                
+                checkbox.addEventListener('change', updateCounter);
+                emulatorList.appendChild(item);
+            });
+            
+            updateCounter();
+        }
+        
+        // Funciones de selección
+        function selectAll() {
+            document.querySelectorAll('.emulator-checkbox').forEach(checkbox => {
+                checkbox.checked = true;
+            });
+            updateCounter();
+            showToast('Todos los sistemas seleccionados');
+        }
+
+        function deselectAll() {
+            document.querySelectorAll('.emulator-checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            updateCounter();
+            showToast('Selección limpiada');
+        }
+        
+        // Actualizar contador
+        function updateCounter() {
+            const selected = document.querySelectorAll('.emulator-checkbox:checked').length;
+            selectedCount.textContent = selected;
+            document.querySelector('.counter').style.color = selected > 0 ? '#27ae60' : '';
+        }
+
+        // Generar lista seleccionada
+        function generateList() {
+            const selected = Array.from(document.querySelectorAll('.emulator-checkbox:checked'))
+                .map(checkbox => ({
+                    id: checkbox.value,
+                    name: checkbox.dataset.name,
+                    desc: checkbox.dataset.desc,
+                    img: checkbox.id
+                }));
+            
+            const resultDiv = document.getElementById('result');
+            
+            if (selected.length > 0) {
+                let html = `
+                    <h2 style="color: var(--primary-color); margin-bottom: 20px;">
+                        🎮 Sistemas seleccionados (${selected.length})
+                    </h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px;">
+                `;
+                
+                selected.forEach(system => {
+                    html += `
+						<div style="border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; background: white;">
+							<div style="width: 100%; height: 120px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; background: #f5f5f5;">
+								<img src="${IMAGE_BASE_URL}${system.img}${IMAGE_EXTENSION}" 
+									 alt="${system.name}"
+									 onerror="this.parentElement.innerHTML='<div style=\'display: flex; align-items: center; justify-content: center; height: 100%; color: #666;\'>Imagen no disponible</div>'"
+									 style="max-width: 100%; max-height: 100%; object-fit: contain;">
+							</div>
+							<div style="font-weight: 600; margin-bottom: 5px;">${system.name}</div>
+							<div style="font-size: 0.8em; color: var(--text-light); margin-bottom: 5px;">${system.desc}</div>
+							<div style="font-size: 0.7em; color: #666; background: #f5f5f5; padding: 2px 5px; border-radius: 3px; display: inline-block;">ID: ${system.id}</div>
+						</div>
+					`;
+                });
+                
+                html += `</div>`;
+                
+                // Lista para copiar
+                html += `
+                    <div style="margin-top: 30px; background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                        <h3 style="margin-top: 0;">📋 Lista de identificadores</h3>
+                        <p>Copia este listado para compartirlo:</p>
+                        <textarea rows="5" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 5px; font-family: monospace;">${selected.map(s => s.id).join('\n')}</textarea>
+                        <button onclick="copyToClipboard()" style="margin-top: 10px; background: #2ecc71;">📋 Copiar al portapapeles</button>
+                    </div>
+                `;
+                
+                resultDiv.innerHTML = html;
+                resultDiv.style.display = 'block';
+                
+                // Desplazamiento suave al resultado
+                resultDiv.scrollIntoView({ behavior: 'smooth' });
+                
+                showToast(`Lista generada con ${selected.length} sistemas`);
+            } else {
+                resultDiv.innerHTML = `
+                    <div style="text-align: center; padding: 20px;">
+                        <div style="font-size: 3em;">😕</div>
+                        <h3 style="margin-top: 10px;">No hay sistemas seleccionados</h3>
+                        <p>Por favor, selecciona al menos un sistema de la lista</p>
+                    </div>
+                `;
+                resultDiv.style.display = 'block';
+            }
+        }
+        
+        // Función para mostrar notificaciones
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.style.position = 'fixed';
+            toast.style.bottom = '20px';
+            toast.style.left = '50%';
+            toast.style.transform = 'translateX(-50%)';
+            toast.style.backgroundColor = '#333';
+            toast.style.color = 'white';
+            toast.style.padding = '12px 24px';
+            toast.style.borderRadius = '30px';
+            toast.style.boxShadow = '0 3px 10px rgba(0,0,0,0.2)';
+            toast.style.zIndex = '1000';
+            toast.style.opacity = '0';
+            toast.style.transition = 'opacity 0.3s';
+            toast.textContent = message;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => { toast.style.opacity = '1'; }, 10);
+            setTimeout(() => { 
+                toast.style.opacity = '0'; 
+                setTimeout(() => { document.body.removeChild(toast); }, 300);
+            }, 3000);
+        }
+        
+        // Función para copiar al portapapeles
+        function copyToClipboard() {
+            const textarea = document.querySelector('#result textarea');
+            textarea.select();
+            document.execCommand('copy');
+            showToast('¡Lista copiada al portapapeles!');
+        }
+        
+        // Iniciar la aplicación
+        init();
+    </script>
+</body>
+</html>
