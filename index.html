@@ -3,496 +3,865 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Selección de Sistemas para Emulación</title>
+    <title>Total Retro Machine (TRM)</title>
     <style>
         :root {
-            --primary-color: #3498db;
-            --hover-color: #2980b9;
-            --bg-color: #f8f9fa;
-            --item-hover: #e9ecef;
-            --text-dark: #2c3e50;
-            --text-light: #7f8c8d;
-            --border-color: #ddd;
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #27ae60;
+            --info-color: #2980b9;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
         }
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 1100px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 25px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            color: #333;
             line-height: 1.6;
-            background-color: #f5f5f5;
         }
+        
         h1 {
             text-align: center;
-            color: var(--text-dark);
-            margin-bottom: 30px;
-            font-weight: 600;
-        }
-        .search-container {
-            margin: 25px 0;
-            position: relative;
-        }
-        #search {
-            width: 100%;
-            padding: 12px 20px;
-            font-size: 16px;
-            border: 2px solid var(--border-color);
-            border-radius: 30px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: all 0.3s;
-        }
-        #search:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 2px 12px rgba(52, 152, 219, 0.3);
-        }
-        .counter {
-            text-align: center;
-            margin: 15px 0;
-            color: var(--text-light);
-            font-size: 0.95em;
-        }
-        .counter span {
-            font-weight: bold;
             color: var(--primary-color);
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
         }
-        .buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 25px 0;
-            flex-wrap: wrap;
-        }
-        button {
-            padding: 12px 24px;
-            cursor: pointer;
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 30px;
-            font-size: 16px;
-            font-weight: 500;
-            transition: all 0.3s;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        button:hover {
-            background: var(--hover-color);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
-        .emulator-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 20px;
+        
+        /* Nueva sección de introducción */
+        .intro-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             margin-bottom: 30px;
         }
-        .emulator-item {
+        
+        .intro-header {
             display: flex;
             align-items: center;
-            padding: 15px;
-            background: white;
-            border-radius: 10px;
-            transition: all 0.3s;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-            border: 1px solid var(--border-color);
-        }
-        .emulator-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.12);
-            border-color: var(--primary-color);
-        }
-        .emulator-checkbox {
-            margin-right: 15px;
-            flex-shrink: 0;
-            width: 20px;
-            height: 20px;
             cursor: pointer;
+            padding: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 5px;
+            transition: background-color 0.3s;
         }
-        .emulator-image {
-            width: 70px;
-            height: 70px;
+        
+        .intro-header:hover {
+            background-color: #1a252f;
+        }
+        
+        .intro-header h2 {
+            margin: 0;
+            flex-grow: 1;
+        }
+        
+        .intro-icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s;
+        }
+        
+        .intro-header.active .intro-icon {
+            transform: rotate(180deg);
+        }
+        
+        .intro-content {
+            display: none;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 0 0 5px 5px;
+            margin-top: 5px;
+        }
+        
+        .intro-content.active {
+            display: block;
+        }
+        
+        .intro-image {
+            float: right;
+            margin: 0 0 15px 15px;
+            max-width: 200px;
+            border-radius: 5px;
+        }
+        
+        .intro-link {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 15px;
+            background-color: var(--secondary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .intro-link:hover {
+            background-color: #2980b9;
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .filter-group h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+        
+        .filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .filter-btn {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 5px 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        .filter-btn:hover {
+            background: #f0f0f0;
+        }
+        
+        .filter-btn.active {
+            background: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+        }
+        
+        .search-box {
+            flex: 2;
+            min-width: 300px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .systems-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .manufacturer-section {
+            margin-bottom: 40px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .manufacturer-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .manufacturer-logo {
+            width: 50px;
+            height: 50px;
             object-fit: contain;
             margin-right: 15px;
-            border-radius: 8px;
+        }
+        
+        .manufacturer-name {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin: 0;
+        }
+        
+        .system-card {
             background: white;
-            padding: 5px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #eee;
         }
-        .emulator-label {
-            flex-grow: 1;
+        
+        .system-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .system-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .system-info {
+            padding: 15px;
+        }
+        
+        .system-name {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin: 0 0 5px;
+            color: var(--dark-color);
+        }
+        
+        .system-meta {
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
         }
-        .emulator-name {
-            font-weight: 600;
-            color: var(--text-dark);
-            margin-bottom: 3px;
-            font-size: 1.05em;
+        
+        .system-type {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
         }
-        .emulator-desc {
-            font-size: 0.85em;
-            color: var(--text-light);
-            line-height: 1.4;
+        
+        .type-arcade {
+            background-color: #ffeaa7;
+            color: #d35400;
         }
-        #result {
-            margin-top: 40px;
-            padding: 25px;
-            border: 1px solid var(--border-color);
-            background-color: white;
-            border-radius: 10px;
-            display: none;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        
+        .type-home {
+            background-color: #a5d8ff;
+            color: #1864ab;
         }
-        .no-image {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
-            color: #999;
-            font-size: 0.7em;
+        
+        .type-portable {
+            background-color: #d8f5a2;
+            color: #5c940d;
+        }
+        
+        .system-description {
+            color: #555;
+            margin: 10px 0;
+            font-size: 0.95rem;
+        }
+        
+        .system-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .download-btn {
+            display: block;
             text-align: center;
-            font-weight: 500;
+            padding: 8px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: background-color 0.3s;
         }
+        
+        .roms-btn {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .imgs-btn {
+            background-color: var(--info-color);
+            color: white;
+        }
+        
+        .roms-btn:hover {
+            background-color: #219653;
+        }
+        
+        .imgs-btn:hover {
+            background-color: #1a6fa8;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2rem;
+            color: #666;
+            grid-column: 1 / -1;
+        }
+        
         @media (max-width: 768px) {
-            .emulator-list {
+            .controls {
+                flex-direction: column;
+            }
+            
+            .filter-group {
+                width: 100%;
+            }
+            
+            .systems-container {
                 grid-template-columns: 1fr;
             }
-            .emulator-item {
-                padding: 12px;
+            
+            .intro-image {
+                float: none;
+                display: block;
+                margin: 0 auto 15px;
+                max-width: 100%;
             }
         }
     </style>
 </head>
 <body>
-    <h1>🕹️ Selecciona los sistemas para emulación</h1>
+    <h1>Total Retro Machine (TRM)</h1>
     
-    <div class="search-container">
-        <input type="text" id="search" placeholder="🔍 Buscar sistema (nombre, fabricante o descripción)...">
+    <!-- Nueva sección de introducción -->
+    <div class="intro-section">
+        <div class="intro-header" onclick="toggleIntro()">
+            <h2>Primer paso</h2>
+            <div class="intro-icon">▼</div>
+        </div>
+        <div class="intro-content" id="introContent">
+            <img src="D:\System\Gdrive\TRM\Web\Totalmod Or.jpg" alt="Total Retro Machine" class="intro-image" onerror="this.src='https://via.placeholder.com/300x200?text=Total+Retro+Machine'">
+			<p>El primer paso es descargar el CORE e instalarlo en una ruta que no contenga espacios (C:\TRM, E:\Mis_Juegos\TRM ...)</p>
+			<p>Lo siguiente es descargar las ROMs y opcionalmente la imagenes. Para instalar, seleciona la carpeta ...\TRM y descomprime el contenido.</p>
+			<p>Una vez instalado ejecuta el archivo "ACTUALIZAR RUTAS.exe" que se encuentra en la carpeta TRM.</p>
+            <a href="https://drive.google.com/file/d/1yf3DxHXqTEf2vC0CwTh1gUC3viEdmsq3/view?usp=drive_link" class="intro-link">Descarga el CORE</a>
+			<p>Total Retro Machine (TRM) es un proyecto dedicado a preservar y compartir la historia de los videojuegos retro. Nuestra colección abarca desde los clásicos arcades de los años 80 hasta las consolas domésticas de los 90 y principios de los 2000.</p>
+            <p>Este repositorio contiene ROMs e imágenes de caja para una amplia variedad de sistemas, cuidadosamente organizados y verificados para garantizar la mejor experiencia de emulación. Cada sistema incluye su biblioteca completa de juegos oficiales, así como traducciones y hacks destacados.</p>
+            <p>TRM no solo es un archivo de juegos, sino también un recurso educativo sobre la evolución de la tecnología de videojuegos. Incluimos información histórica sobre cada plataforma, sus especificaciones técnicas y su impacto en la industria.</p>
+            <p>El proyecto se actualiza regularmente con nuevas adiciones y mejoras. Nuestro objetivo es mantener viva la memoria de estas plataformas que sentaron las bases de los videojuegos modernos.</p>
+            <p>Para aquellos interesados en la emulación, TRM ofrece configuraciones optimizadas para los emuladores más populares, asegurando la mejor compatibilidad y rendimiento posible.</p>
+        </div>
     </div>
     
-    <div class="counter">
-        <span id="selectedCount">0</span> seleccionados de <span id="totalCount">0</span> sistemas disponibles
+    <div class="controls">
+        <div class="filter-group">
+            <h3>Tipo de Sistema</h3>
+            <div class="filter-options">
+                <button class="filter-btn active" data-filter="all">Todos</button>
+                <button class="filter-btn" data-filter="arcade">Arcade</button>
+                <button class="filter-btn" data-filter="home">Doméstico</button>
+                <button class="filter-btn" data-filter="portable">Portátil</button>
+            </div>
+        </div>
+        
+        <div class="filter-group">
+            <h3>Fabricante</h3>
+            <div class="filter-options">
+                <button class="filter-btn active" data-manufacturer="all">Todos</button>
+                <button class="filter-btn" data-manufacturer="sega">Sega</button>
+                <button class="filter-btn" data-manufacturer="nintendo">Nintendo</button>
+                <button class="filter-btn" data-manufacturer="sony">Sony</button>
+                <button class="filter-btn" data-manufacturer="snk">SNK</button>
+                <button class="filter-btn" data-manufacturer="capcom">Capcom</button>
+            </div>
+        </div>
+        
+        <div class="search-box">
+            <h3>Buscar</h3>
+            <input type="text" id="search-input" placeholder="Buscar por nombre de sistema...">
+        </div>
     </div>
     
-    <div class="buttons">
-        <button onclick="selectAll()">✓ Seleccionar todos</button>
-        <button onclick="deselectAll()">✗ Deseleccionar todos</button>
-        <button onclick="generateList()">📋 Generar lista seleccionada</button>
+    <!-- Sega -->
+    <div class="manufacturer-section" data-manufacturer="sega">
+        <div class="manufacturer-header">
+            <img src="https://download.logo.wine/logo/Sega/Sega-Logo.wine.png" alt="Sega Logo" class="manufacturer-logo">
+            <h2 class="manufacturer-name">Sega</h2>
+        </div>
+        
+        <div class="systems-container">
+            <!-- Dreamcast -->
+            <div class="system-card" data-type="home" data-year="1998">
+                <img src="https://totalmod.github.io/SystemSelect/Images/consoles/dreamcast.webp" alt="Sega Dreamcast" onerror="this.src='https://via.placeholder.com/300x200?text=Dreamcast'">
+                <div class="system-info">
+                    <h3 class="system-name">Dreamcast</h3>
+                    <div class="system-meta">
+                        <span>1998</span>
+                        <span class="system-type type-home">Doméstica</span>
+                    </div>
+                    <p class="system-description">Consola de 128 bits que marcó el final de Sega en el mercado de hardware.</p>
+                    <div class="system-buttons">
+                        <a href="https://drive.google.com/file/d/1nH5ZljBAcuwn9VqjsL_qdCz4bzlqAXAC/view?usp=sharing" class="download-btn roms-btn" target="_blank">ROMs</a>
+                        <a href="https://drive.google.com/file/d/1PuuooaKdGDyeR7gJwYpvuQxY2S2Sgh_4/view?usp=sharing" class="download-btn imgs-btn" target="_blank">Imágenes</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mega Drive -->
+            <div class="system-card" data-type="home" data-year="1988">
+                <img src="https://totalmod.github.io/SystemSelect/Images/consoles/megadrive.webp" alt="Sega Mega Drive" onerror="this.src='https://via.placeholder.com/300x200?text=Mega+Drive'">
+                <div class="system-info">
+                    <h3 class="system-name">Mega Drive/Genesis</h3>
+                    <div class="system-meta">
+                        <span>1988</span>
+                        <span class="system-type type-home">Doméstica</span>
+                    </div>
+                    <p class="system-description">Consola de 16 bits que compitió directamente con el SNES.</p>
+                    <div class="system-buttons">
+                        <a href="https://drive.google.com/file/d/1UrnfMWeeE6qqKViCd0Jnsa9JONUCcazV/view?usp=drive_link" class="download-btn roms-btn" target="_blank">ROMs</a>
+                        <a href="https://drive.google.com/file/d/1WGlU7t3uDcwZKEVkG_5DnYttbsqyr_5v/view?usp=drive_link" class="download-btn imgs-btn" target="_blank">Imágenes</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sega 32X -->
+            <div class="system-card" data-type="home" data-year="1994">
+                <img src="https://totalmod.github.io/SystemSelect/Images/consoles/sega32x.webp" alt="Sega 32X" onerror="this.src='https://via.placeholder.com/300x200?text=Sega+32X'">
+                <div class="system-info">
+                    <h3 class="system-name">Sega 32X</h3>
+                    <div class="system-meta">
+                        <span>1994</span>
+                        <span class="system-type type-home">Doméstica</span>
+                    </div>
+                    <p class="system-description">Expansión de 32 bits para Mega Drive con resultados comerciales limitados.</p>
+                    <div class="system-buttons">
+                        <a href="https://drive.google.com/file/d/12QIYr6ZXEFl8Nh2yDEguShADJ1kI6UGi/view?usp=drive_link" class="download-btn roms-btn" target="_blank">ROMs</a>
+                        <a href="https://drive.google.com/file/d/1QjApKc1I-t8VEmgzzNxvJeMbFkSKINrv/view?usp=drive_link" class="download-btn imgs-btn" target="_blank">Imágenes</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Saturn -->
+            <div class="system-card" data-type="home" data-year="1994">
+                <img src="https://totalmod.github.io/SystemSelect/Images/consoles/saturn.webp" alt="Sega Saturn" onerror="this.src='https://via.placeholder.com/300x200?text=Saturn'">
+                <div class="system-info">
+                    <h3 class="system-name">Sega Saturn</h3>
+                    <div class="system-meta">
+                        <span>1994</span>
+                        <span class="system-type type-home">Doméstica</span>
+                    </div>
+                    <p class="system-description">Consola de 32 bits con arquitectura compleja y gran catálogo en Japón.</p>
+                    <div class="system-buttons">
+                        <a href="https://drive.google.com/file/d/1fGDBfRKIRHMSHwsaHRHNh2eWbcgq5iYN/view?usp=drive_link" class="download-btn roms-btn" target="_blank">ROMs</a>
+                        <a href="https://drive.google.com/file/d/1w_qtx-PKoZBw5cUWAAtNrHmNWO8wG_-r/view?usp=drive_link" class="download-btn imgs-btn" target="_blank">Imágenes</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Naomi -->
+            <div class="system-card" data-type="arcade" data-year="1998">
+                <img src="https://totalmod.github.io/SystemSelect/Images/consoles/naomi.webp" alt="Sega Naomi" onerror="this.src='https://via.placeholder.com/300x200?text=Naomi'">
+                <div class="system-info">
+                    <h3 class="system-name">Sega Naomi</h3>
+                    <div class="system-meta">
+                        <span>1998</span>
+                        <span class="system-type type-arcade">Arcade</span>
+                    </div>
+                    <p class="system-description">Plataforma arcade basada en hardware similar al Dreamcast.</p>
+                    <div class="system-buttons">
+                        <a href="https://drive.google.com/file/d/1oLHUjjSpHNQSuzJpHanqsJbOjSFXuBtZ/view?usp=drive_link" class="download-btn roms-btn" target="_blank">ROMs</a>
+                        <a href="https://drive.google.com/file/d/1tjKHyTonS5SAEcg36LwP9RjnOWiEZBjB/view?usp=drive_link" class="download-btn imgs-btn" target="_blank">Imágenes</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Atomiswave -->
+            <div class="system-card" data-type="arcade" data-year="2003">
+                <img src="https://totalmod.github.io/SystemSelect/Images/consoles/atomiswave.webp" alt="Atomiswave" onerror="this.src='https://via.placeholder.com/300x200?text=Atomiswave'">
+                <div class="system-info">
+                    <h3 class="system-name">Atomiswave</h3>
+                    <div class="system-meta">
+                        <span>2003</span>
+                        <span class="system-type type-arcade">Arcade</span>
+                    </div>
+                    <p class="system-description">Sistema de arcade basado en hardware de Dreamcast.</p>
+                    <div class="system-buttons">
+                        <a href="https://drive.google.com/file/d/14HFKHD0iQjLLtbTLsipXMsk7XbIdmyhi/view?usp=sharing" class="download-btn roms-btn" target="_blank">ROMs</a>
+                        <a href="https://drive.google.com/file/d/1DPChx_3QG2L2B9YCKdxtgNcztd7KvcQs/view?usp=sharing" class="download-btn imgs-btn" target="_blank">Imágenes</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Model 2 -->
+            <div class="system-card" data-type="arcade" data-year="1993">
+                <img src="https://totalmod.github.io/SystemSelect/Images/consoles/model2.webp" alt="Model 2" onerror="this.src='https://via.placeholder.com/300x200?text=Model+2'">
+                <div class="system-info">
+                    <h3 class="system-name">Sega Model 2</h3>
+                    <div class="system-meta">
+                        <span>1993</span>
+                        <span class="system-type type-arcade">Arcade</span>
+                    </div>
+                    <p class="system-description">Plataforma arcade pionera en gráficos 3D.</p>
+                    <div class="system-buttons">
+                        <a href="https://drive.google.com/file/d/1GfpSmnBMiY9sTJcXqkSIgX9Kbk5ilFxD/view?usp=drive_link" class="download-btn roms-btn" target="_blank">ROMs</a>
+                        <a href="https://drive.google.com/file/d/1ahrxURMtLmVHkN0SIdB5gwfvANJ-0BEJ/view?usp=drive_link" class="download-btn imgs-btn" target="_blank">Imágenes</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ST-V -->
+            <div class="system-card" data-type="arcade" data-year="1994">
+                <img src="https://totalmod.github.io/SystemSelect/Images/consoles/stv.webp" alt="ST-V" onerror="this.src='https://via.placeholder.com/300x200?text=ST-V'">
+                <div class="system-info">
+                    <h3 class="system-name">Sega Titan Video (ST-V)</h3>
+                    <div class="system-meta">
+                        <span>1994</span>
+                        <span class="system-type type-arcade">Arcade</span>
+                    </div>
+                    <p class="system-description">Plataforma arcade basada en hardware de Saturn.</p>
+                    <div class="system-buttons">
+                        <a href="https://drive.google.com/file/d/1BnRpoM7hS07Nnc8R1nZtsHEiHMtGWYHo/view?usp=drive_link" class="download-btn roms-btn" target="_blank">ROMs</a>
+                        <a href="https://drive.google.com/file/d/1zvPWqpqLdHIMHcbThLJY1cFpMhh8mOTf/view?usp=drive_link" class="download-btn imgs-btn" target="_blank">Imágenes</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     
-    <div class="emulator-list" id="emulatorList"></div>
+    <!-- Nintendo -->
+    <div class="manufacturer-section" data-manufacturer="nintendo">
+        <div class="manufacturer-header">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Nintendo.svg/1200px-Nintendo.svg.png" alt="Nintendo Logo" class="manufacturer-logo">
+            <h2 class="manufacturer-name">Nintendo</h2>
+        </div>
+        
+        <div class="systems-container">
+            <!-- SNES -->
+            <div class="system-card" data-type="home" data-year="1990">
+                <img src="https://totalmod.github.io/SystemSelect/Images/consoles/snes.webp" alt="Super Nintendo" onerror="this.src='https://via.placeholder.com/300x200?text=SNES'">
+                <div class="system-info">
+                    <h3 class="system-name">Super Nintendo (SNES)</h3>
+                    <div class="system-meta">
+                        <span>1990</span>
+                        <span class="system-type type-home">Doméstica</span>
+                    </div>
+                    <p class="system-description">Consola de 16 bits con algunos de los mejores juegos de la historia.</p>
+                    <div class="system-buttons">
+                        <a href="https://drive.google.com/file/d/1hbJNhb1-2YfKUN9jS1cNpBjXw6OctWhF/view?usp=drive_link" class="download-btn roms-btn" target="_blank">ROMs</a>
+                        <a href="https://drive.google.com/file/d/14FdHbL0HxG14Nl0Ok4tcG7cifyo3jbyC/view?usp=drive_link" class="download-btn imgs-btn" target="_blank">Imágenes</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Nintendo 64 -->
+            <div class="system-card" data-type="home" data-year="1996">
+                <img src="https://totalmod.github.io/SystemSelect/Images/consoles/n64.webp" alt="Nintendo 64" onerror="this.src='https://via.placeholder.com/300x200?text=Nintendo+64'">
+                <div class="system-info">
+                    <h3 class="system-name">Nintendo 64</h3>
+                    <div class="system-meta">
+                        <span>1996</span>
+                        <span class="system-type type-home">Doméstica</span>
+                    </div>
+                    <p class="system-description">Consola de 64 bits con innovador mando analógico.</p>
+                    <div class="system-buttons">
+                        <a href="https://drive.google.com/file/d/1vQtIHxHwWM9HKlP6OY-_yuxdm7lr7dTI/view?usp=drive_link" class="download-btn roms-btn" target="_blank">ROMs</a>
+                        <a href="https://drive.google.com/file/d/1kzbf8pIaP3QdpjRhlOJ6WRGwqQdzvye1/view?usp=drive_link" class="download-btn imgs-btn" target="_blank">Imágenes</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- GameCube -->
+            <div class="system-card" data-type="home" data-year="2001">
+                <img src="https://totalmod.github.io/SystemSelect/Images/consoles/gc.webp" alt="GameCube" onerror="this.src='https://via.placeholder.com/300x200?text=GameCube'">
+                <div class="system-info">
+                    <h3 class="system-name">Nintendo GameCube</h3>
+                    <div class="system-meta">
+                        <span>2001</span>
+                        <span class="system-type type-home">Doméstica</span>
+                    </div>
+                    <p class="system-description">Consola compacta con discos miniDVD y gran catálogo de juegos.</p>
+                    <div class="system-buttons">
+                        <a href="https://drive.google.com/file/d/1zCIHejcN2LIP3LbVHM2Uz5jlHruBOWtL/view?usp=drive_link" class="download-btn roms-btn" target="_blank">ROMs</a>
+                        <a href="https://drive.google.com/file/d/1lCe62IOdLZorM-J8yvWQI3yAhH0UoQSV/view?usp=drive_link" class="download-btn imgs-btn" target="_blank">Imágenes</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     
-    <div id="result"></div>
+    <!-- Sony -->
+    <div class="manufacturer-section" data-manufacturer="sony">
+        <div class="manufacturer-header">
+            <img src="https://guiaimpresion.com/wp-content/uploads/2020/06/1973-hasta-ahora.jpg" alt="Sony Logo" class="manufacturer-logo">
+            <h2 class="manufacturer-name">Sony</h2>
+        </div>
+        
+        <div class="systems-container">
+            <!-- PSX -->
+            <div class="system-card" data-type="home" data-year="1994">
+                <img src="https://totalmod.github.io/SystemSelect/Images/consoles/psx.webp" alt="PlayStation" onerror="this.src='https://via.placeholder.com/300x200?text=PlayStation'">
+                <div class="system-info">
+                    <h3 class="system-name">PlayStation (PSX)</h3>
+                    <div class="system-meta">
+                        <span>1994</span>
+                        <span class="system-type type-home">Doméstica</span>
+                    </div>
+                    <p class="system-description">Primera consola de Sony que revolucionó la industria con juegos 3D en CD.</p>
+                    <div class="system-buttons">
+                        <a href="https://drive.google.com/file/d/1TCQfkl0_MqssW6aDzydGOrQKP9Qhr55_/view?usp=drive_link" class="download-btn roms-btn" target="_blank">ROMs</a>
+                        <a href="https://drive.google.com/file/d/1QfKawpM0sZofhIcckk5TaiDFnraa9cAc/view?usp=drive_link" class="download-btn imgs-btn" target="_blank">Imágenes</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- PSP -->
+            <div class="system-card" data-type="portable" data-year="2004">
+                <img src="https://totalmod.github.io/SystemSelect/Images/consoles/psp.webp" alt="PSP" onerror="this.src='https://via.placeholder.com/300x200?text=PSP'">
+                <div class="system-info">
+                    <h3 class="system-name">PlayStation Portable (PSP)</h3>
+                    <div class="system-meta">
+                        <span>2004</span>
+                        <span class="system-type type-portable">Portátil</span>
+                    </div>
+                    <p class="system-description">Primera consola portátil de Sony con gráficos cercanos a PS2.</p>
+                    <div class="system-buttons">
+                        <a href="https://drive.google.com/file/d/1sXLGFErN8X6FmdZZaPQGUxcDB9zuGf4u/view?usp=drive_link" class="download-btn roms-btn" target="_blank">ROMs</a>
+                        <a href="https://drive.google.com/file/d/1h6uW7uRWIllRjGb5n07AD_pKzwRSRSNk/view?usp=drive_link" class="download-btn imgs-btn" target="_blank">Imágenes</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     
+    <!-- SNK -->
+    <div class="manufacturer-section" data-manufacturer="snk">
+        <div class="manufacturer-header">
+            <img src="https://images.seeklogo.com/logo-png/47/1/snk-entertainment-logo-png_seeklogo-477303.png" alt="SNK Logo" class="manufacturer-logo">
+            <h2 class="manufacturer-name">SNK</h2>
+        </div>
+        
+        <div class="systems-container">
+            <!-- Neo Geo -->
+            <div class="system-card" data-type="arcade" data-year="1990">
+                <img src="https://totalmod.github.io/SystemSelect/Images/consoles/neogeo.webp" alt="Neo Geo" onerror="this.src='https://via.placeholder.com/300x200?text=Neo+Geo'">
+                <div class="system-info">
+                    <h3 class="system-name">Neo Geo AES/MVS</h3>
+                    <div class="system-meta">
+                        <span>1990</span>
+                        <span class="system-type type-arcade">Arcade</span>
+                    </div>
+                    <p class="system-description">Sistema arcade y doméstico con juegos idénticos en ambas versiones.</p>
+                    <div class="system-buttons">
+                        <a href="https://drive.google.com/file/d/15VR6RsSna4CslUqTouoWVfNb-_vHD5kw/view?usp=drive_link" class="download-btn roms-btn" target="_blank">ROMs</a>
+                        <a href="https://drive.google.com/file/d/1XWZzqCcz6Yka9rIfqlLP79WSAAxIzlUu/view?usp=drive_link" class="download-btn imgs-btn" target="_blank">Imágenes</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Neo Geo CD -->
+            <div class="system-card" data-type="home" data-year="1994">
+                <img src="https://totalmod.github.io/SystemSelect/Images/consoles/neogeocd.webp" alt="Neo Geo CD" onerror="this.src='https://via.placeholder.com/300x200?text=Neo+Geo+CD'">
+                <div class="system-info">
+                    <h3 class="system-name">Neo Geo CD</h3>
+                    <div class="system-meta">
+                        <span>1994</span>
+                        <span class="system-type type-home">Doméstica</span>
+                    </div>
+                    <p class="system-description">Versión en CD del sistema Neo Geo con tiempos de carga largos.</p>
+                    <div class="system-buttons">
+                        <a href="https://drive.google.com/file/d/103erJM3BoDQmjqAFLiRkbxQHaq5-18tJ/view?usp=drive_link" class="download-btn roms-btn" target="_blank">ROMs</a>
+                        <a href="https://drive.google.com/file/d/1nPJplYh9V54DPmY-Efm3c-ltCX0JMEoN/view?usp=drive_link" class="download-btn imgs-btn" target="_blank">Imágenes</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Capcom -->
+    <div class="manufacturer-section" data-manufacturer="capcom">
+        <div class="manufacturer-header">
+            <img src="https://pngdownload.io/wp-content/uploads/2023/12/Capcom-logo-gaming-emblem-transparent-png-scaled.webp" alt="Capcom Logo" class="manufacturer-logo">
+            <h2 class="manufacturer-name">Capcom</h2>
+        </div>
+        
+        <div class="systems-container">
+            <!-- CPSX -->
+            <div class="system-card" data-type="arcade" data-year="1988">
+                <img src="https://totalmod.github.io/SystemSelect/Images/consoles/cps1.webp" alt="Capcom Play System" onerror="this.src='https://via.placeholder.com/300x200?text=Capcom+Play+System'">
+                <div class="system-info">
+                    <h3 class="system-name">Capcom Play System</h3>
+                    <div class="system-meta">
+                        <span>1988-1996</span>
+                        <span class="system-type type-arcade">Arcade</span>
+                    </div>
+                    <p class="system-description">Plataforma de Capcom para juegos arcade clásicos.</p>
+                    <p>Incluye CPS1, CPS2 y CPS3</p>
+                    <div class="system-buttons">
+                        <a href="https://drive.google.com/file/d/1VjLp0hXUXSEeGUSzNn7limPk5b0sU4b3/view?usp=sharing" class="download-btn roms-btn" target="_blank">ROMs</a>
+                        <a href="https://drive.google.com/file/d/1IVVEMsENC1OqEFbVV7GCDXBzwnIW4syj/view?usp=sharing" class="download-btn imgs-btn" target="_blank">Imágenes</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Otros -->
+    <div class="manufacturer-section">
+        <div class="manufacturer-header">
+            <h2 class="manufacturer-name">Otros Sistemas</h2>
+        </div>
+        
+        <div class="systems-container">
+            <!-- FinalBurn Neo -->
+            <div class="system-card" data-type="arcade" data-year="2018">
+                <img src="https://totalmod.github.io/SystemSelect/Images/consoles/fbneo.webp" alt="FinalBurn Neo" onerror="this.src='https://via.placeholder.com/300x200?text=FinalBurn+Neo'">
+                <div class="system-info">
+                    <h3 class="system-name">FinalBurn Neo</h3>
+                    <div class="system-meta">
+                        <span>2018</span>
+                        <span class="system-type type-arcade">Arcade</span>
+                    </div>
+                    <p class="system-description">Emulador moderno que soporta múltiples sistemas arcade.</p>
+                    <div class="system-buttons">
+                        <a href="https://drive.google.com/file/d/1nQM0smHSB88dXOP4hTMq9Ml18WFyNHzx/view?usp=sharing" class="download-btn roms-btn" target="_blank">ROMs</a>
+                        <a href="https://drive.google.com/file/d/1RBoEO5G5HniKLzLVnn7mMXaXu9QNrAVL/view?usp=drive_link" class="download-btn imgs-btn" target="_blank">Imágenes</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- MAME -->
+            <div class="system-card" data-type="arcade" data-year="1997">
+                <img src="https://totalmod.github.io/SystemSelect/Images/consoles/mame.webp" alt="MAME" onerror="this.src='https://via.placeholder.com/300x200?text=MAME'">
+                <div class="system-info">
+                    <h3 class="system-name">MAME</h3>
+                    <div class="system-meta">
+                        <span>1997</span>
+                        <span class="system-type type-arcade">Arcade</span>
+                    </div>
+                    <p class="system-description">Emulador de máquinas arcade con soporte para miles de juegos.</p>
+                    <div class="system-buttons">
+                        <a href="https://drive.google.com/file/d/1tzvNzsQlG8NRUNfvk8wdH7QLbu5nbjxq/view?usp=drive_link" class="download-btn roms-btn" target="_blank">ROMs</a>
+                        <a href="https://drive.google.com/file/d/1AahAG8ui8feeVM7UtA1yZxRjdk5JyrGD/view?usp=drive_link" class="download-btn imgs-btn" target="_blank">Imágenes</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- PC Engine CD -->
+            <div class="system-card" data-type="home" data-year="1988">
+                <img src="https://totalmod.github.io/SystemSelect/Images/consoles/pcenginecd.webp" alt="PC Engine CD" onerror="this.src='https://via.placeholder.com/300x200?text=PC+Engine+CD'">
+                <div class="system-info">
+                    <h3 class="system-name">PC Engine CD</h3>
+                    <div class="system-meta">
+                        <span>1988</span>
+                        <span class="system-type type-home">Doméstica</span>
+                    </div>
+                    <p class="system-description">Versión en CD de la exitosa consola PC Engine/TurboGrafx-16.</p>
+                    <div class="system-buttons">
+                        <a href="https://drive.google.com/file/d/13nkimAeFmIou5-U8HqY5jDzgLRLNOld5/view?usp=drive_link" class="download-btn roms-btn" target="_blank">ROMs</a>
+                        <a href="https://drive.google.com/file/d/1tlYX2VvYG4A8mJJ-bD4RoA29mkGj5zkd/view?usp=drive_link" class="download-btn imgs-btn" target="_blank">Imágenes</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Configuración de imágenes WEBP
-        const IMAGE_BASE_URL = './Images/consoles/';
-        const IMAGE_EXTENSION = '.webp';
-        const DEFAULT_IMAGE = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100"><rect width="100" height="100" fill="%23f5f7fa"/><text x="50" y="55" font-family="Arial" font-size="10" text-anchor="middle" fill="%23999">Imagen no disponible</text></svg>';
-        
-        // Datos completos de los sistemas (lista completa)
-        const systems = [
-            { id: "3do", name: "The 3DO Company", desc: "3DO Interactive Multiplayer (1993)", img: "3do" },
-            { id: "amiga", name: "Commodore", desc: "Amiga (serie 500/1000/2000, 1985)", img: "amiga" },
-            { id: "amiga1200", name: "Commodore", desc: "Amiga 1200 (1992)", img: "amiga1200" },
-            { id: "amigacd32", name: "Commodore", desc: "Amiga CD32 (1993)", img: "amigacd32" },
-            { id: "amstradcpc", name: "Amstrad", desc: "CPC (Color Personal Computer, 1984)", img: "amstradcpc" },
-            { id: "arduboy", name: "Arduboy", desc: "Consola portátil programable (2014)", img: "arduboy" },
-            { id: "atari2600", name: "Atari", desc: "2600 (VCS, 1977)", img: "atari2600" },
-            { id: "atari5200", name: "Atari", desc: "5200 SuperSystem (1982)", img: "atari5200" },
-            { id: "atari7800", name: "Atari", desc: "7800 ProSystem (1986)", img: "atari7800" },
-            { id: "atarijaguar", name: "Atari", desc: "Jaguar (1993)", img: "atarijaguar" },
-            { id: "atarilynx", name: "Atari", desc: "Lynx (portátil, 1989)", img: "atarilynx" },
-            { id: "atarist", name: "Atari", desc: "ST (series ST/STE/TT/Falcon, 1985)", img: "atarist" },
-            { id: "atomiswave", name: "Sammy Corporation", desc: "Atomiswave (arcade, 2003)", img: "atomiswave" },
-            { id: "c64", name: "Commodore", desc: "64 (C64, 1982)", img: "c64" },
-            { id: "colecovision", name: "Coleco", desc: "ColecoVision (1982)", img: "colecovision" },
-            { id: "cps1", name: "Capcom", desc: "CP System (CPS-1, arcade, 1988)", img: "cps1" },
-            { id: "cps2", name: "Capcom", desc: "CP System II (CPS-2, arcade, 1993)", img: "cps2" },
-            { id: "cps3", name: "Capcom", desc: "CP System III (CPS-3, arcade, 1996)", img: "cps3" },
-            { id: "dos", name: "IBM", desc: "PC DOS (juegos para DOS, 1981)", img: "dos" },
-            { id: "dreamcast", name: "Sega", desc: "Dreamcast (1998)", img: "dreamcast" },
-            { id: "easyrpg", name: "EasyRPG", desc: "Juegos RPG Maker 2000/2003 (2000)", img: "easyrpg" },
-            { id: "fbneo", name: "FinalBurn Neo", desc: "Emulador de arcade múltiple", img: "fbneo" },
-            { id: "flash", name: "Adobe", desc: "Flash Player (juegos .swf)", img: "flash" },
-            { id: "gameandwatch", name: "Nintendo", desc: "Game & Watch (1980)", img: "gameandwatch" },
-            { id: "gamegear", name: "Sega", desc: "Game Gear (1990)", img: "gamegear" },
-            { id: "gb", name: "Nintendo", desc: "Game Boy (original, 1989)", img: "gb" },
-            { id: "gba", name: "Nintendo", desc: "Game Boy Advance (2001)", img: "gba" },
-            { id: "gbc", name: "Nintendo", desc: "Game Boy Color (1998)", img: "gbc" },
-            { id: "gc", name: "Nintendo", desc: "GameCube (2001)", img: "gc" },
-            { id: "mame", name: "MAME", desc: "Multiple Arcade Machine Emulator", img: "mame" },
-            { id: "mastersystem", name: "Sega", desc: "Master System (1985)", img: "mastersystem" },
-            { id: "megacd", name: "Sega", desc: "Mega-CD/Sega CD (1991)", img: "megacd" },
-            { id: "megadrive", name: "Sega", desc: "Mega Drive/Genesis (1988)", img: "megadrive" },
-            { id: "model2", name: "Sega", desc: "Model 2 (arcade, 1993)", img: "model2" },
-            { id: "msx1", name: "Microsoft", desc: "MSX (primera generación, 1983)", img: "msx1" },
-            { id: "msx2", name: "Microsoft", desc: "MSX2 (1985)", img: "msx2" },
-            { id: "mugen", name: "M.U.G.E.N", desc: "Motor de juegos de lucha", img: "mugen" },
-            { id: "n3ds", name: "Nintendo", desc: "Nintendo 3DS (2011)", img: "n3ds" },
-            { id: "n64", name: "Nintendo", desc: "Nintendo 64 (1996)", img: "n64" },
-            { id: "naomi", name: "Sega", desc: "NAOMI (arcade, 1998)", img: "naomi" },
-            { id: "naomi2", name: "Sega", desc: "NAOMI 2 (arcade, 2000)", img: "naomi2" },
-            { id: "nds", name: "Nintendo", desc: "Nintendo DS (2004)", img: "nds" },
-            { id: "neogeo", name: "SNK", desc: "Neo Geo AES/MVS (1990)", img: "neogeo" },
-            { id: "neogeocd", name: "SNK", desc: "Neo Geo CD (1994)", img: "neogeocd" },
-            { id: "nes", name: "Nintendo", desc: "NES (Nintendo Entertainment System, 1983)", img: "nes" },
-            { id: "ngp", name: "SNK", desc: "Neo Geo Pocket (1998)", img: "ngp" },
-            { id: "ngpc", name: "SNK", desc: "Neo Geo Pocket Color (1999)", img: "ngpc" },
-            { id: "odyssey2", name: "Magnavox/Philips", desc: "Odyssey² (1978)", img: "odyssey2" },
-            { id: "pcengine", name: "NEC", desc: "PC Engine/TurboGrafx-16 (1987)", img: "pcengine" },
-            { id: "pcenginecd", name: "NEC", desc: "PC Engine CD/TurboGrafx-CD (1988)", img: "pcenginecd" },
-            { id: "pico8", name: "Lexaloffle", desc: "PICO-8 (fantasy console)", img: "pico8" },
-            { id: "ps2", name: "Sony", desc: "PlayStation 2 (2000)", img: "ps2" },
-            { id: "ps3", name: "Sony", desc: "PlayStation 3 (2006)", img: "ps3" },
-            { id: "psp", name: "Sony", desc: "PlayStation Portable (2004)", img: "psp" },
-            { id: "psvita", name: "Sony", desc: "PlayStation Vita (2011)", img: "psvita" },
-            { id: "psx", name: "Sony", desc: "PlayStation (PS1, 1994)", img: "psx" },
-            { id: "satellaview", name: "Nintendo", desc: "Satellaview (BS-X, 1995)", img: "satellaview" },
-            { id: "saturn", name: "Sega", desc: "Saturn (1994)", img: "saturn" },
-            { id: "scummvm", name: "SCUMM", desc: "Motor de aventuras gráficas", img: "scummvm" },
-            { id: "sega32x", name: "Sega", desc: "32X (1994)", img: "sega32x" },
-            { id: "snes", name: "Nintendo", desc: "Super Nintendo (SNES, 1990)", img: "snes" },
-            { id: "stv", name: "Sega", desc: "ST-V (arcade, basado en Saturn, 1994)", img: "stv" },
-            { id: "supervision", name: "Watara", desc: "SuperVision (1992)", img: "supervision" },
-            { id: "switch", name: "Nintendo", desc: "Nintendo Switch (2017)", img: "switch" },
-            { id: "uzebox", name: "Uzebox", desc: "Consola DIY de 8 bits", img: "uzebox" },
-            { id: "vectrex", name: "GCE/Milton Bradley", desc: "Vectrex (1982)", img: "vectrex" },
-            { id: "videopac", name: "Magnavox/Philips", desc: "Videopac G7000 (1978)", img: "videopac" },
-            { id: "vircon32", name: "Vircon", desc: "Consola virtual de 32 bits", img: "vircon32" },
-            { id: "virtualboy", name: "Nintendo", desc: "Virtual Boy (1995)", img: "virtualboy" },
-            { id: "wasm4", name: "WASM-4", desc: "Fantasy console para WebAssembly", img: "wasm4" },
-            { id: "wii", name: "Nintendo", desc: "Wii (2006)", img: "wii" },
-            { id: "wiiu", name: "Nintendo", desc: "Wii U (2012)", img: "wiiu" },
-            { id: "wonderswan", name: "Bandai", desc: "WonderSwan (1999)", img: "wonderswan" },
-            { id: "wonderswancolor", name: "Bandai", desc: "WonderSwan Color (2000)", img: "wonderswancolor" },
-            { id: "x68000", name: "Sharp", desc: "X68000 (1987)", img: "x68000" },
-            { id: "xbox", name: "Microsoft", desc: "Xbox (original, 2001)", img: "xbox" },
-            { id: "xbox360", name: "Microsoft", desc: "Xbox 360 (2005)", img: "xbox360" },
-            { id: "zmachine", name: "Infocom", desc: "Máquina Z (aventuras de texto, 1979)", img: "zmachine" },
-            { id: "zx81", name: "Sinclair", desc: "ZX81 (1981)", img: "zx81" },
-            { id: "zxspectrum", name: "Sinclair", desc: "ZX Spectrum (1982)", img: "zxspectrum" }
-        ];
-
-        // Variables globales
-        let currentSystems = [...systems];
-        
-        // Elementos del DOM
-        const emulatorList = document.getElementById('emulatorList');
-        const totalCount = document.getElementById('totalCount');
-        const selectedCount = document.getElementById('selectedCount');
-        const searchInput = document.getElementById('search');
-        
-        // Inicialización
-        function init() {
-            totalCount.textContent = systems.length;
-            renderSystems();
-            setupEventListeners();
+        // Función para mostrar/ocultar la introducción
+        function toggleIntro() {
+            const introContent = document.getElementById('introContent');
+            const introHeader = document.querySelector('.intro-header');
+            
+            introContent.classList.toggle('active');
+            introHeader.classList.toggle('active');
         }
         
-        // Configurar event listeners
-        function setupEventListeners() {
-            searchInput.addEventListener('input', (e) => {
-                const searchTerm = e.target.value.toLowerCase();
-                if (searchTerm.length > 0) {
-                    currentSystems = systems.filter(system => 
-                        system.id.toLowerCase().includes(searchTerm) || 
-                        system.name.toLowerCase().includes(searchTerm) || 
-                        system.desc.toLowerCase().includes(searchTerm)
-                    );
-                } else {
-                    currentSystems = [...systems];
-                }
-                renderSystems();
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const searchInput = document.getElementById('search-input');
+            const manufacturerSections = document.querySelectorAll('.manufacturer-section');
+            const systemCards = document.querySelectorAll('.system-card');
+            
+            // Filtrado por tipo y fabricante
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Manejar botones activos
+                    if (this.dataset.filter) {
+                        document.querySelectorAll('[data-filter]').forEach(btn => btn.classList.remove('active'));
+                        this.classList.add('active');
+                    } else if (this.dataset.manufacturer) {
+                        document.querySelectorAll('[data-manufacturer]').forEach(btn => btn.classList.remove('active'));
+                        this.classList.add('active');
+                    }
+                    
+                    applyFilters();
+                });
             });
             
-            // Tecla rápida Ctrl+A para seleccionar todos
-            document.addEventListener('keydown', (e) => {
-                if (e.ctrlKey && e.key === 'a') {
-                    e.preventDefault();
-                    selectAll();
-                }
-            });
-        }
-        
-        // Renderizar sistemas
-        function renderSystems() {
-            emulatorList.innerHTML = '';
+            // Búsqueda
+            searchInput.addEventListener('input', applyFilters);
             
-            currentSystems.forEach(system => {
-                const item = document.createElement('div');
-                item.className = 'emulator-item';
+            function applyFilters() {
+                const activeTypeFilter = document.querySelector('.filter-btn.active[data-filter]').dataset.filter;
+                const activeManufacturerFilter = document.querySelector('.filter-btn.active[data-manufacturer]').dataset.manufacturer;
+                const searchTerm = searchInput.value.toLowerCase();
                 
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.className = 'emulator-checkbox';
-                checkbox.id = system.id;
-                checkbox.value = system.id;
-                checkbox.dataset.name = system.name;
-                checkbox.dataset.desc = system.desc;
+                let visibleCards = 0;
                 
-                const img = document.createElement('img');
-                img.className = 'emulator-image';
-                img.src = `${IMAGE_BASE_URL}${system.img}${IMAGE_EXTENSION}`;
-                img.alt = system.name;
-                img.title = system.desc;
-                img.onerror = function() {
-                    this.src = DEFAULT_IMAGE;
-                };
-                
-                const label = document.createElement('div');
-                label.className = 'emulator-label';
-                
-                const nameSpan = document.createElement('div');
-                nameSpan.className = 'emulator-name';
-                nameSpan.textContent = system.name;
-                
-                const descSpan = document.createElement('div');
-                descSpan.className = 'emulator-desc';
-                descSpan.textContent = system.desc;
-                
-                label.appendChild(nameSpan);
-                label.appendChild(descSpan);
-                
-                item.appendChild(checkbox);
-                item.appendChild(img);
-                item.appendChild(label);
-                
-                checkbox.addEventListener('change', updateCounter);
-                emulatorList.appendChild(item);
-            });
-            
-            updateCounter();
-        }
-        
-        // Funciones de selección
-        function selectAll() {
-            document.querySelectorAll('.emulator-checkbox').forEach(checkbox => {
-                checkbox.checked = true;
-            });
-            updateCounter();
-            showToast('Todos los sistemas seleccionados');
-        }
-
-        function deselectAll() {
-            document.querySelectorAll('.emulator-checkbox').forEach(checkbox => {
-                checkbox.checked = false;
-            });
-            updateCounter();
-            showToast('Selección limpiada');
-        }
-        
-        // Actualizar contador
-        function updateCounter() {
-            const selected = document.querySelectorAll('.emulator-checkbox:checked').length;
-            selectedCount.textContent = selected;
-            document.querySelector('.counter').style.color = selected > 0 ? '#27ae60' : '';
-        }
-
-        // Generar lista seleccionada
-        function generateList() {
-            const selected = Array.from(document.querySelectorAll('.emulator-checkbox:checked'))
-                .map(checkbox => ({
-                    id: checkbox.value,
-                    name: checkbox.dataset.name,
-                    desc: checkbox.dataset.desc,
-                    img: checkbox.id
-                }));
-            
-            const resultDiv = document.getElementById('result');
-            
-            if (selected.length > 0) {
-                let html = `
-                    <h2 style="color: var(--primary-color); margin-bottom: 20px;">
-                        🎮 Sistemas seleccionados (${selected.length})
-                    </h2>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px;">
-                `;
-                
-                selected.forEach(system => {
-                    html += `
-						<div style="border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; background: white;">
-							<div style="width: 100%; height: 120px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; background: #f5f5f5;">
-								<img src="${IMAGE_BASE_URL}${system.img}${IMAGE_EXTENSION}" 
-									 alt="${system.name}"
-									 onerror="this.parentElement.innerHTML='<div style=\'display: flex; align-items: center; justify-content: center; height: 100%; color: #666;\'>Imagen no disponible</div>'"
-									 style="max-width: 100%; max-height: 100%; object-fit: contain;">
-							</div>
-							<div style="font-weight: 600; margin-bottom: 5px;">${system.name}</div>
-							<div style="font-size: 0.8em; color: var(--text-light); margin-bottom: 5px;">${system.desc}</div>
-							<div style="font-size: 0.7em; color: #666; background: #f5f5f5; padding: 2px 5px; border-radius: 3px; display: inline-block;">ID: ${system.id}</div>
-						</div>
-					`;
+                systemCards.forEach(card => {
+                    const cardType = card.dataset.type;
+                    const cardManufacturer = card.closest('.manufacturer-section').dataset.manufacturer || 'other';
+                    const cardName = card.querySelector('.system-name').textContent.toLowerCase();
+                    const cardDescription = card.querySelector('.system-description').textContent.toLowerCase();
+                    
+                    const typeMatch = activeTypeFilter === 'all' || cardType === activeTypeFilter;
+                    const manufacturerMatch = activeManufacturerFilter === 'all' || cardManufacturer === activeManufacturerFilter;
+                    const searchMatch = searchTerm === '' || 
+                                        cardName.includes(searchTerm) || 
+                                        cardDescription.includes(searchTerm);
+                    
+                    if (typeMatch && manufacturerMatch && searchMatch) {
+                        card.style.display = 'block';
+                        visibleCards++;
+                    } else {
+                        card.style.display = 'none';
+                    }
                 });
                 
-                html += `</div>`;
+                // Mostrar/ocultar secciones de fabricante según si tienen tarjetas visibles
+                manufacturerSections.forEach(section => {
+                    const hasVisibleCards = Array.from(section.querySelectorAll('.system-card')).some(
+                        card => card.style.display !== 'none'
+                    );
+                    
+                    section.style.display = hasVisibleCards ? 'block' : 'none';
+                });
                 
-                // Lista para copiar
-                html += `
-                    <div style="margin-top: 30px; background: #f8f9fa; padding: 15px; border-radius: 8px;">
-                        <h3 style="margin-top: 0;">📋 Lista de identificadores</h3>
-                        <p>Copia este listado para compartirlo:</p>
-                        <textarea rows="5" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 5px; font-family: monospace;">${selected.map(s => s.id).join('\n')}</textarea>
-                        <button onclick="copyToClipboard()" style="margin-top: 10px; background: #2ecc71;">📋 Copiar al portapapeles</button>
-                    </div>
-                `;
-                
-                resultDiv.innerHTML = html;
-                resultDiv.style.display = 'block';
-                
-                // Desplazamiento suave al resultado
-                resultDiv.scrollIntoView({ behavior: 'smooth' });
-                
-                showToast(`Lista generada con ${selected.length} sistemas`);
-            } else {
-                resultDiv.innerHTML = `
-                    <div style="text-align: center; padding: 20px;">
-                        <div style="font-size: 3em;">😕</div>
-                        <h3 style="margin-top: 10px;">No hay sistemas seleccionados</h3>
-                        <p>Por favor, selecciona al menos un sistema de la lista</p>
-                    </div>
-                `;
-                resultDiv.style.display = 'block';
+                // Mostrar mensaje si no hay resultados
+                const noResults = document.querySelector('.no-results');
+                if (visibleCards === 0) {
+                    if (!noResults) {
+                        const container = document.querySelector('.systems-container');
+                        const message = document.createElement('div');
+                        message.className = 'no-results';
+                        message.textContent = 'No se encontraron sistemas que coincidan con los filtros.';
+                        container.appendChild(message);
+                    }
+                } else if (noResults) {
+                    noResults.remove();
+                }
             }
-        }
-        
-        // Función para mostrar notificaciones
-        function showToast(message) {
-            const toast = document.createElement('div');
-            toast.style.position = 'fixed';
-            toast.style.bottom = '20px';
-            toast.style.left = '50%';
-            toast.style.transform = 'translateX(-50%)';
-            toast.style.backgroundColor = '#333';
-            toast.style.color = 'white';
-            toast.style.padding = '12px 24px';
-            toast.style.borderRadius = '30px';
-            toast.style.boxShadow = '0 3px 10px rgba(0,0,0,0.2)';
-            toast.style.zIndex = '1000';
-            toast.style.opacity = '0';
-            toast.style.transition = 'opacity 0.3s';
-            toast.textContent = message;
-            
-            document.body.appendChild(toast);
-            
-            setTimeout(() => { toast.style.opacity = '1'; }, 10);
-            setTimeout(() => { 
-                toast.style.opacity = '0'; 
-                setTimeout(() => { document.body.removeChild(toast); }, 300);
-            }, 3000);
-        }
-        
-        // Función para copiar al portapapeles
-        function copyToClipboard() {
-            const textarea = document.querySelector('#result textarea');
-            textarea.select();
-            document.execCommand('copy');
-            showToast('¡Lista copiada al portapapeles!');
-        }
-        
-        // Iniciar la aplicación
-        init();
+        });
     </script>
 </body>
 </html>
